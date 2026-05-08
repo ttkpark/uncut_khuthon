@@ -8,53 +8,94 @@ export default async function HomePage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/')
 
+  const nickname = user.email?.split('@')[0] ?? '사용자'
+
   return (
-    <main className="min-h-screen bg-stone-950 text-white flex flex-col">
-      <header className="flex justify-between items-center px-8 py-6">
-        <h1 className="text-2xl font-bold tracking-tight">Uncut</h1>
-        <div className="flex items-center gap-4">
-          <Link
-            href="/taste"
-            className="px-4 py-2 rounded-full border border-amber-400 text-amber-400 text-sm hover:bg-amber-400/10 transition"
-          >
-            ✦ 내 종합 취향
-          </Link>
+    <main className="relative w-full h-screen overflow-hidden bg-amber-50">
+      {/* 배경 일러스트 */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/home-bg.jpg')" }}
+      />
+      {/* 배경 오버레이 (카드 가독성) */}
+      <div className="absolute inset-0 bg-amber-950/10" />
+
+      {/* 상단 네비게이션 */}
+      <nav className="relative z-10 flex items-center justify-between px-10 py-5 bg-amber-50/80 backdrop-blur-sm border-b border-amber-200/50">
+        <h1 className="text-xl font-bold text-stone-800 tracking-tight">취향 책장</h1>
+        <div className="flex items-center gap-8">
+          <Link href="/home" className="text-sm text-stone-700 hover:text-stone-900 font-medium transition">홈</Link>
+          <Link href="/category/lp" className="text-sm text-stone-600 hover:text-stone-900 transition">음악</Link>
+          <Link href="/category/book" className="text-sm text-stone-600 hover:text-stone-900 transition">미디어</Link>
+          <Link href="/category/tv" className="text-sm text-stone-600 hover:text-stone-900 transition">영상</Link>
+          <Link href="/taste" className="text-sm text-stone-600 hover:text-stone-900 transition">내 취향</Link>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-amber-700 font-medium">{nickname}님</span>
           <form action={logout}>
-            <button type="submit" className="text-stone-500 text-sm hover:text-white transition">
+            <button
+              type="submit"
+              className="text-sm px-4 py-1.5 rounded-full border border-stone-400 text-stone-600 hover:bg-stone-100 transition"
+            >
               로그아웃
             </button>
           </form>
         </div>
-      </header>
+      </nav>
 
-      <section className="px-8 pt-4 pb-8">
-        <p className="text-stone-400 text-sm">안녕하세요,</p>
-        <h2 className="text-2xl font-bold mt-1">오늘 어떤 콘텐츠를 감상하셨나요?</h2>
-        <p className="text-stone-500 text-sm mt-2">
-          남의 리뷰보다 먼저 — 지금 바로 내 감상을 기록하세요.
-        </p>
-      </section>
+      {/* 플로팅 카드들 */}
+      <div className="absolute inset-0 z-10">
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-5 px-8 pb-16 max-w-3xl">
-        {[
-          { label: '음악', slug: 'lp', icon: '🎵', desc: '들은 음악, 앨범, 아티스트', color: 'from-purple-900/40 to-stone-900' },
-          { label: '미디어', slug: 'book', icon: '📖', desc: '읽은 책, 웹툰, 만화', color: 'from-emerald-900/40 to-stone-900' },
-          { label: '영상', slug: 'tv', icon: '📺', desc: '본 영화, 드라마, 다큐', color: 'from-blue-900/40 to-stone-900' },
-        ].map(({ label, slug, icon, desc, color }) => (
-          <Link
-            key={slug}
-            href={`/category/${slug}`}
-            className={`flex flex-col gap-4 bg-gradient-to-br ${color} border border-stone-800 rounded-2xl p-6 hover:border-stone-600 transition`}
-          >
-            <span className="text-5xl">{icon}</span>
-            <div>
-              <p className="font-bold text-lg">{label}</p>
-              <p className="text-stone-400 text-sm mt-0.5">{desc}</p>
-            </div>
-            <span className="text-stone-500 text-sm mt-auto">기록 보기 →</span>
-          </Link>
-        ))}
-      </section>
+        {/* 영상 카드 — TV 위 */}
+        <Link
+          href="/category/tv"
+          className="absolute top-[35%] left-[31%] w-52 bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border border-amber-100"
+        >
+          <p className="font-bold text-stone-800 text-lg mb-2">영상</p>
+          <p className="text-stone-500 text-sm leading-relaxed">작은 TV 앞에서<br />떠오른 마음을 기록해요.</p>
+        </Link>
+
+        {/* 미디어 카드 — 책상/노트북 위 */}
+        <Link
+          href="/category/book"
+          className="absolute top-[58%] left-[28%] w-52 bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border border-amber-100"
+        >
+          <p className="font-bold text-stone-800 text-lg mb-2">미디어</p>
+          <p className="text-stone-500 text-sm leading-relaxed">책장 한 칸에 생각의<br />조각을 꽂아둬요.</p>
+        </Link>
+
+        {/* 내 취향 카드 — 중앙 */}
+        <Link
+          href="/taste"
+          className="absolute top-[22%] left-[50%] w-52 bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border border-amber-100"
+        >
+          <p className="font-bold text-stone-800 text-lg mb-2">내 취향</p>
+          <p className="text-stone-500 text-sm leading-relaxed">쌓인 감상으로<br />취향을 발견해요.</p>
+        </Link>
+
+        {/* 오늘의 추천 카드 — 우측 상단 */}
+        <Link
+          href="/taste"
+          className="absolute top-[18%] left-[65%] w-60 bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border border-amber-100"
+        >
+          <p className="text-amber-500 text-xs font-semibold mb-2">★ 오늘의 추천</p>
+          <p className="text-stone-600 text-sm leading-relaxed">
+            잔잔한 여운이 남는 이야기,<br />
+            오늘은 &lsquo;리틀 포레스트&rsquo;를<br />
+            만나볼까요?
+          </p>
+        </Link>
+
+        {/* 음악 카드 — LP 선반 위 */}
+        <Link
+          href="/category/lp"
+          className="absolute top-[60%] left-[72%] w-52 bg-white/90 backdrop-blur-sm rounded-2xl p-5 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all border border-amber-100"
+        >
+          <p className="font-bold text-stone-800 text-lg mb-2">음악</p>
+          <p className="text-stone-500 text-sm leading-relaxed">LP판처럼 오래 맴도는<br />감상을 남겨요.</p>
+        </Link>
+
+      </div>
     </main>
   )
 }
