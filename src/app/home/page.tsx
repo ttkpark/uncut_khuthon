@@ -15,7 +15,7 @@ export default async function HomePage() {
       {/* 배경 일러스트 */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/home-bg.jpg')" }}
+        style={{ backgroundImage: "url('/home-bg.png')" }}
       />
       {/* 배경 오버레이 (카드 가독성) */}
       <div className="absolute inset-0 bg-amber-950/10" />
