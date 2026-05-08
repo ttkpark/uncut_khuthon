@@ -24,9 +24,29 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp({
     email: formData.get('email') as string,
     password,
+    options: { emailRedirectTo: undefined },
   })
   if (error) return { error: error.message }
+
+  // 이메일 인증 없이 바로 로그인
+  const { error: loginError } = await supabase.auth.signInWithPassword({
+    email: formData.get('email') as string,
+    password,
+  })
+  if (loginError) return { error: '가입 완료. 로그인 페이지에서 로그인해주세요.' }
   redirect('/home')
+}
+
+export async function loginWithGoogle() {
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://uncut-khuthon.vercel.app'}/auth/callback`,
+    },
+  })
+  if (error || !data.url) redirect('/login')
+  redirect(data.url)
 }
 
 export async function logout() {
